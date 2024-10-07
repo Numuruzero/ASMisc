@@ -77,6 +77,7 @@ function rowAlignCopy() {
         }
     });
     // Sort in descending order based on the absolute value of the numerical difference
+    // What if I sort by ascending order of intended destination?
     valDiffs.sort((a, b) => {
         // if (a[2] > b[2]) {
         //   return -1;
@@ -109,13 +110,13 @@ function rowAlignCopy() {
                 for (let j = 0; j < valDiffs.length; j++) {
                     if (valDiffs[i][1] < valDiffs[j][1] && valDiffs[i][0] >= valDiffs[j][1]) { // If the current start is lower than the current entry and the current endpoint is higher or equivalent, the current entry's start will be moved upward (decremented)
                         valDiffs[j][1]--;
-                        console.log(`Recorded sub row ${valDiffs[j][1] + 1} was adjusted to ${valDiffs[j][1]}`);
-                        console.log(`Recorded row difference ${valDiffs[j][2]} will be adjusted to ${valDiffs[j][0] - valDiffs[j][1]} with objective ${valDiffs[j][0]}`);
+                        // console.log(`Recorded sub row ${valDiffs[j][1] + 1} was adjusted to ${valDiffs[j][1]}`);
+                        // console.log(`Recorded row difference ${valDiffs[j][2]} will be adjusted to ${valDiffs[j][0] - valDiffs[j][1]} with objective ${valDiffs[j][0]}`);
                         valDiffs[j][2] = valDiffs[j][0] - valDiffs[j][1];
                     } else if (valDiffs[i][1] > valDiffs[j][1] && valDiffs[i][0] <= valDiffs[j][1]) { // If the current start is higher than the current entry and the current endpoint is lower or equivalent, the current entry's start will be moved downward (incremented)
                         valDiffs[j][1]++;
-                        console.log(`Recorded sub row ${valDiffs[j][1] - 1} was adjusted to ${valDiffs[j][1]}`);
-                        console.log(`Recorded row difference ${valDiffs[j][2]} will be adjusted to ${valDiffs[j][0] - valDiffs[j][1]} with objective ${valDiffs[j][0]}`);
+                        // console.log(`Recorded sub row ${valDiffs[j][1] - 1} was adjusted to ${valDiffs[j][1]}`);
+                        // console.log(`Recorded row difference ${valDiffs[j][2]} will be adjusted to ${valDiffs[j][0] - valDiffs[j][1]} with objective ${valDiffs[j][0]}`);
                         valDiffs[j][2] = valDiffs[j][0] - valDiffs[j][1];
                     };
                 };
@@ -123,11 +124,12 @@ function rowAlignCopy() {
                 moves++;
             };
             console.log(valDiffs);
-            console.log(moveLog);
         };
-        curDiff = valDiffs.reduce((acc, curr) => {
-          acc + curr[2];
-        }, 0);
+        curDiff = valDiffs.reduce((acc, curr) => acc + curr[2],
+        0,
+        );
+        console.log(curDiff);
+        console.log(`Attempt number ${Math.abs(attempts - 4)} complete`);
         if (curDiff == 0) {
           attempts = 0;
         } else {
@@ -135,6 +137,7 @@ function rowAlignCopy() {
         }
     };
     console.log(`Alignment completed in ${moves} moves`);
+    console.log(moveLog);
     // Commented out because the variable does not update dynamically with the inner loop
     // valDiffs.forEach((id) => {
     //   if (id[2] !== 0 && id[1] !== id[0]) {
@@ -161,4 +164,3 @@ function moveTest() {
   const moveRow = shSub.getRange(`A9`);
   shSub.moveRows(moveRow, 6);
 }
-
