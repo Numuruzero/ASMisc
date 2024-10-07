@@ -79,13 +79,17 @@ function rowAlignCopy() {
     // Sort in descending order based on the absolute value of the numerical difference
     // What if I sort by ascending order of intended destination?
     valDiffs.sort((a, b) => {
+        // Testing without abs
         // if (a[2] > b[2]) {
         //   return -1;
         // }
-        // Testing without abs
         if (Math.abs(a[2]) > Math.abs(b[2])) {
             return -1;
         }
+        // Testing with sorting by destination instead (no, diff is the way to go)
+        // if (Math.abs(a[0]) > Math.abs(b[0])) {
+        //     return -1;
+        // }
     })
     console.log(valDiffs);
     // Iterate through each element and move the rows on Sub to match Dom, adjusting the differences each time
@@ -125,7 +129,7 @@ function rowAlignCopy() {
             };
             console.log(valDiffs);
         };
-        curDiff = valDiffs.reduce((acc, curr) => acc + curr[2],
+        curDiff = valDiffs.reduce((acc, curr) => acc + Math.abs(curr[2]),
         0,
         );
         console.log(curDiff);
