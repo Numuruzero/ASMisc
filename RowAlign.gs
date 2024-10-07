@@ -55,6 +55,7 @@ Moving a row downwards (incrementing) will move to the indicated index, which is
 Therefore, a determination needs to made in advance if the target row is higher or lower than the moving row and adjusted accordingly
 */
 
+// Can condense this and the time it takes so it checks after every move if it needs to continue
 function rowAlignCopy() {
     // Created with the assumption that Sub should match Dom
     const ss = SpreadsheetApp.getActive();
@@ -77,7 +78,6 @@ function rowAlignCopy() {
         }
     });
     // Sort in descending order based on the absolute value of the numerical difference
-    // What if I sort by ascending order of intended destination?
     valDiffs.sort((a, b) => {
         // Testing without abs
         // if (a[2] > b[2]) {
@@ -86,8 +86,8 @@ function rowAlignCopy() {
         if (Math.abs(a[2]) > Math.abs(b[2])) {
             return -1;
         }
-        // Testing with sorting by destination instead (no, diff is the way to go)
-        // if (Math.abs(a[0]) > Math.abs(b[0])) {
+        // Testing with sorting by smallest destination instead (no, diff is the way to go)
+        // if (Math.abs(a[0]) < Math.abs(b[0])) {
         //     return -1;
         // }
     })
@@ -97,8 +97,13 @@ function rowAlignCopy() {
     const moveLog = [];
     let attempts = 3;
     let curDiff;
+    // While loop to iterate up to 3 times
     while (attempts > 0) {
+      // Loop through each row that needs to be changed
         for (let i = 0; i < valDiffs.length; i++) {
+          if (curDiff == 0) {
+            break;
+          }
             if (valDiffs[i][2] !== 0 && valDiffs[i][1] !== valDiffs[i][0]) {
                 moveLog.push(`Move ${moves + 1}: ${valDiffs[i][1]} to ${valDiffs[i][0]}`)
                 console.log(`Move ${moves + 1}`)
@@ -111,6 +116,7 @@ function rowAlignCopy() {
                 }
                 valDiffs[i][2] = 0;
                 console.log(`Sub row ${valDiffs[i][1]} was moved to row ${valDiffs[i][0]} and the difference will be adjusted to 0`);
+                // Separately iterate through each row to adjust row locations based on the last movement
                 for (let j = 0; j < valDiffs.length; j++) {
                     if (valDiffs[i][1] < valDiffs[j][1] && valDiffs[i][0] >= valDiffs[j][1]) { // If the current start is lower than the current entry and the current endpoint is higher or equivalent, the current entry's start will be moved upward (decremented)
                         valDiffs[j][1]--;
@@ -126,12 +132,12 @@ function rowAlignCopy() {
                 };
                 valDiffs[i][1] = valDiffs[i][0];
                 moves++;
+                console.log(valDiffs);
+                curDiff = valDiffs.reduce((acc, curr) => acc + Math.abs(curr[2]),
+                  0,
+                );
             };
-            console.log(valDiffs);
         };
-        curDiff = valDiffs.reduce((acc, curr) => acc + Math.abs(curr[2]),
-        0,
-        );
         console.log(curDiff);
         console.log(`Attempt number ${Math.abs(attempts - 4)} complete`);
         if (curDiff == 0) {
@@ -168,3 +174,4 @@ function moveTest() {
   const moveRow = shSub.getRange(`A9`);
   shSub.moveRows(moveRow, 6);
 }
+
