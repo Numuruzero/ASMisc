@@ -1,4 +1,4 @@
-/*Stolen mostly whole-cloth from the point-in-polygon implementation published by Substack: https://github.com/substack/point-in-polygon or https://www.npmjs.com/package/point-in-polygon. Github repo returns 404 so archiving for personal use just in case.*/
+/*Stolen mostly whole-cloth from the point-in-polygon implementation published by Substack under the 2016 MIT license: https://github.com/substack/point-in-polygon or https://www.npmjs.com/package/point-in-polygon. Github repo returns 404 so archiving for personal use just in case.*/
 
 function pointInPolygonNested (point, vs, start, end) {
     var x = point[0], y = point[1];
