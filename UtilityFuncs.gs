@@ -8,3 +8,36 @@ function setByObject(sheet, defaults) {
     sheet.getRange(range).setValue(defaults[range]);
   }
 }
+
+// Maybe need a way to do this in reverse as well when working backwards through a list, but might work to just call reverse on the array and all subarrays
+/**
+ * Collapses an array of numbers down to a 2D array with start-end values
+ * @param {Array} list - A 1-dimensional array of numbers in any order (will be sorted small to large)
+ * @returns A 2-dimensional array of start-end values, with isolated numbers appearing twice
+ */
+function collapseRows(list) {
+  list.sort((a, b) => a - b);
+  console.log(list);
+  const ranges = [[list[0]]];
+  let j = 0;
+  let run = false;
+  for (let i = 1, end = list.length; i < end; i++) {
+    if (list[i] == list[i - 1] + 1) {
+      run = true;
+      if (i == end - 1) {
+      ranges[j].push(list[i]);
+      }
+      continue;
+    } else {
+      run = false;
+      ranges[j].push(list[i - 1]);
+      ranges.push([]);
+      j++;
+      ranges[j].push(list[i]);
+    }
+    if (i == end - 1) {
+      ranges[j].push(list[i]);
+    }
+  }
+  return ranges;
+}
