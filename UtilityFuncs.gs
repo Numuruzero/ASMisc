@@ -17,10 +17,14 @@ function setByObject(sheet, defaults) {
  */
 function collapseRows(list) {
   list.sort((a, b) => a - b);
-  console.log(list);
+  // console.log(list);
   const ranges = [[list[0]]];
   let j = 0;
   let run = false;
+  // Edge case for if a single number is passed in
+  if (list.length == 1) {
+    return [[list[0], list[0]]];
+  }
   for (let i = 1, end = list.length; i < end; i++) {
     if (list[i] == list[i - 1] + 1) {
       run = true;
@@ -39,6 +43,7 @@ function collapseRows(list) {
       ranges[j].push(list[i]);
     }
   }
+  // console.log(ranges);
   return ranges;
 }
 
