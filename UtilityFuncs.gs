@@ -136,3 +136,70 @@ function csv2array(text) {
   }
   return result;
 }
+
+// Function to get the column letter for a given header string in an array of headers
+function getAlpha(header) {
+    // Could probably use below function to convert number to letters instead of calling the GAS function for it
+    const letter = columnToLetter(headers.indexOf(header) + 1);
+    if (letter == "") {
+      // console.log(`Header "${header}" not found`);
+      return undefined;
+    }
+    // console.log(`Found header "${header}" at column ${letter}`)
+    return letter;
+  }
+
+// Filter function stolen from https://stackoverflow.com/questions/1960473/get-all-unique-values-in-a-javascript-array-remove-duplicates
+function onlyUnique(value, index, array) {
+  return array.indexOf(value) === index;
+}
+
+// From https://stackoverflow.com/questions/21229180/convert-column-index-into-corresponding-column-letter
+function letterToColumn(letter)
+{
+  let column = 0, length = letter.length;
+  for (let i = 0; i < length; i++)
+  {
+    column += (letter.charCodeAt(i) - 64) * Math.pow(26, length - i - 1);
+  }
+  return column;
+}
+function columnToLetter(column)
+{
+  let temp, letter = '';
+  while (column > 0)
+  {
+    temp = (column - 1) % 26;
+    letter = String.fromCharCode(temp + 65) + letter;
+    column = (column - temp - 1) / 26;
+  }
+  return letter;
+}
+
+// Retool this to accept numbers for columns too because why not
+function getRangeIndices(start, end, ref) {
+  let arRef = {};
+  const startNum = letterToColumn(start);
+  const endNum = letterToColumn(end);
+  const length = endNum - startNum;
+
+  for (let i = 0; i <= length; i++) {
+    let searchCol = columnToLetter(startNum + i);
+    let foundKey = null;
+    // console.log(`Searching to the key for value ${searchCol} in ot`)
+
+    for (const key in ref) {
+      if (ref[key] === searchCol) {
+        foundKey = key;
+        // console.log(`Found ${searchCol} at key ${key}`)
+          break; // Stop after finding the first match
+      }
+    }
+    if (foundKey != null) {
+      arRef[foundKey] = i;
+    }
+  }
+
+  // console.log(arRef);
+  return arRef;
+}
