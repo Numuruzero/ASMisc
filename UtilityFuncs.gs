@@ -49,13 +49,14 @@ function collapseRows(list) {
 
 /**
  * Takes a CSV string as input (as formatted by GAS import)
- * @returns A 2-dimensional array indentical to a spreadsheet import
+ * @returns A 2-dimensional array identical to a spreadsheet import
  */
 function csv2array(text) {
-  // console.log(text);
   // Since this is primarily meant to be used for capturing CSVs from emails, we may want to invoke .replace(/\\\\/g,"\\") on the input so that we can properly escape characters
   // For now leaving this out in case it results in unintended behavior in the future
   const lines = text.split(/\n|\r\n/);
+  // Debug value, every line should be the same length even if the cells are blank
+  let lineLength = undefined;
   const result = [];
 
   // Iterate through each line of the incoming CSV
@@ -78,7 +79,7 @@ function csv2array(text) {
     for (let i = 0, fin = current.length; i < fin; i++) {
       // We're looking at the current and next character to determine if we're about to reach the end of a cell
       const char = current[i];
-      // const lastChar = current?.[i - 1];
+      // const lastChar = current?.[i - 1]; // Not found to be useful
       const nextChar = current?.[i + 1];
       
       // If we find a quotation mark, don't log it, but consider this to be the beginning or end of a cell. 
@@ -91,7 +92,7 @@ function csv2array(text) {
           doubleQuote = !doubleQuote;
           continue;
         }
-        // Otherwise, we're in a quote block and should ignore commas until we see another comma
+        // Otherwise, we're in a quote block and should ignore commas until we see another quote
         isQuote = !isQuote;
         if (i == fin - 1) {
           row.push(group);
@@ -132,7 +133,12 @@ function csv2array(text) {
       }
     }
 
+    if (lineLength && row.length != lineLength) {
+      console.log(`Current line is not the right length`);
+      console.log(row);
+    }
     result.push(row);
+    if (!lineLength) lineLength = row.length;
   }
   return result;
 }
